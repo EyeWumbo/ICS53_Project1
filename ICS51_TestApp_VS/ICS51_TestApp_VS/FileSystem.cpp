@@ -130,3 +130,41 @@ int FileSystem::deleteFile(string fileName){
 	iosystem->freeFileDescriptor(descriptorIndex);
 	return 0;
 }
+
+int FileSystem::read(int index, char* mem_area, int count)
+{
+    
+    iosystem->read_block(index, mem_area);
+    
+    if(open_desc(index) == -1)
+    {
+        return -1;        
+    }
+    else
+    {
+        int some_variable = open_desc(index);
+        openFileTable[some_variable];
+        
+        return 1;
+    }
+}
+
+int FileSystem::write(int index, char value, int count)
+{
+    iosystem->write_block(i, openFileTable[index].bufferReader);
+    for(int i=0; i<64; i++)
+    {
+        currentBlock[i] = bufferReader[i];
+    }
+    
+    return 1;
+}
+
+int FileSystem::lseek(int index, int pos)
+{
+    int position = pos/64;
+    iosystem->read_block(index + position);
+    openFileTable[index].currentPosition = pos-64*position;
+    
+    return 1;
+}
