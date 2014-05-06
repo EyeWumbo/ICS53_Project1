@@ -20,19 +20,20 @@ private:
 	};
 	
 	struct dirEntry{
-		string symbolic_file_name;
+		std::string symbolic_file_name;
 		int indexForDesc;
 	};
 
-	dirEntry directory[];
-	FileSystem::OFT openFileTable[3];
+	dirEntry dir[14];
+	OFT openFileTable[3];
 	IOSystem* iosystem;
 
 public:
-	FileSystem::FileSystem(IOSystem* iosystem);
+	FileSystem(IOSystem* iosystem);
 	int open(std::string symbolicName);
 	int open_desc(int desc_no);
 	void close(int index);
+	void directory();
 
 };
 

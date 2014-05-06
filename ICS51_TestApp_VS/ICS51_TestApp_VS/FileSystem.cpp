@@ -9,6 +9,9 @@ FileSystem::FileSystem(IOSystem* iosystem){
 
 	this->iosystem = iosystem;
 
+	for(int i = 0; i < 14; i ++){
+		directory[i] = nullptr;
+	}
 	for(int i = 0; i < 3; i ++){
 		openFileTable[i] = OFT();
 	}
@@ -21,5 +24,16 @@ int FileSystem::open(std::string symbolicName){
 		}
 	}
 	return -1;
+}
+
+void FileSystem::directory(){
+	for (int i=0; i < 14; i++){
+		dirEntry entry = dir[i];
+		if (entry != nullptr){
+			char* fileDesc[64];
+			iosystem.read_block(entry.indexForDesc, fileDesc);
+			std::cout << entry.symbolic_file_name << " " << fileDesc[0] << std::endl;
+		}
+	}
 }
 

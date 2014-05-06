@@ -25,14 +25,6 @@ IOSystem::IOSystem(int l, int b)
 		ldisk[i] = Block();
 	}
 
-	std::string eh = "wololol";
-	for (int i = 0; i < 14; i++){
-		if (eh[i] == 0){
-			break;
-		}
-		cache[0].symbolicName[i] = eh[i];
-	}
-
 	std::string lel = "and so with the power of greyskull shit happened the end";
 	for (int i = 0; i < 64; i++){
 		if (lel[i] == '\0'){
@@ -79,10 +71,6 @@ void IOSystem::restore(){
 			ss >> cacheNumber;
 			if (cacheNumber == -1){
 				break;
-			}
-			getline(saveFile, line);
-			for (int i = 0; line[i] != 0 || i > 10; i++){
-				cache[cacheNumber].symbolicName[i] = line[i];
 			}
 			getline(saveFile, line);
 			cache[cacheNumber].fileSize = (char)atoi(line.c_str());
