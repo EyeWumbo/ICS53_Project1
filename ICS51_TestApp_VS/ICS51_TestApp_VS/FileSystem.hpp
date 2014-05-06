@@ -18,7 +18,13 @@ private:
 		}
 
 	};
+	
+	struct dirEntry{
+		string symbolic_file_name;
+		int indexForDesc;
+	};
 
+	dirEntry directory[];
 	FileSystem::OFT openFileTable[3];
 	IOSystem* iosystem;
 
