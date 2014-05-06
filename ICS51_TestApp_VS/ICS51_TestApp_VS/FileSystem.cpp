@@ -84,3 +84,49 @@ void FileSystem::directory(){
 	}
 }
 
+int FileSystem::create(string symbolic_file_name){
+	char* current = new char[64];
+
+	for (int i = 0; i < 14; ++i){
+		dirEntry* currentDirEntry = dir[i];
+		if(currentDirEntry->symbolic_file_name.compare(symbolic_file_name) == 0)
+			return -2;
+	}
+
+	int descriptorIndex = iosystem->findFreeDescriptor();
+	dirEntry* currentDirEntry = nullptr;
+	
+	if(descriptorIndex != -1)
+		return -1;
+
+	for(int i = 0; i < 14 && currentDirEntry == nullptr; i++)
+	{
+		if(dir[i] == nullptr){
+			currentDirEntry = new dirEntry(symbolic_file_name, descriptorIndex);
+			dir[i] = d;
+		}
+	}
+	
+	return 0;
+}
+
+int FileSystem::deleteFile(string fileName){
+	int descriptorIndex = -1;
+
+	for (int i = 0; i < 14 && descriptorIndex == -1; ++i){
+		dirEntry* currentDirEntry = dir[i];
+		if(currentDirEntry->symbolic_file_name.compare(fileName) == 0)
+		{
+			descriptorIndex = currentDirEntry->descriptorIndex;
+			delete currentDirEntry;
+		}
+	}
+	
+	if(descriptorIndex == -1)
+		return -1;
+
+	//update bit map
+
+	iosystem->freeFileDescriptor(descriptorIndex);
+	return 0;
+}

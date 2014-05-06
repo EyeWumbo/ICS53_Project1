@@ -13,6 +13,7 @@ class IOSystem
 		struct FileDescriptor{
 			unsigned char fileSize;
 			unsigned char blockLocations[3];
+			bool isFree;
 
 			FileDescriptor(){
 				fileSize = 0;
@@ -21,8 +22,27 @@ class IOSystem
 				}
 			}
 
-			bool isEmpty(){
-				return blockLocations[0] == 0;
+			FileDescriptor(){
+				initialize();
+			}
+
+			//resets parameters
+			void initialize()
+			{
+				fileSize = 0;
+				isFree = true;
+				for (int i = 0; i < 3; ++i){
+					blockLocations[i] = 0;
+				}
+			}
+
+			bool isFree(){
+				return isFree;
+			}
+
+			void setAllocated()
+			{
+				isFree = false;
 			}
 
 			friend std::ostream& operator <<(std::ostream& os, const FileDescriptor& fd){
@@ -81,6 +101,8 @@ class IOSystem
 		int getNumDescriptors();
 		int getNumBlocks();
 		char* getCurrentBlock();
+		int findFreeDescriptor();
+		void freeFileDescriptor(int index);
 };
 
 #endif

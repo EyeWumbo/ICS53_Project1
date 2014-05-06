@@ -28,7 +28,13 @@ private:
 	
 	struct dirEntry{
 		std::string symbolic_file_name;
-		int indexForDesc;
+		int descriptorIndex;
+
+		dirEntry(std::string name, int index)
+		{
+			symbolic_file_name = name;
+			descriptorIndex = index;
+		}
 	};
 
 	dirEntry dir[14];
@@ -41,7 +47,8 @@ public:
 	int open_desc(int desc_no);
 	void close(int index);
 	void directory();
-
+	int create(string symbolic_file_name);
+	int deleteFile(string fileName);
 };
 
 #endif

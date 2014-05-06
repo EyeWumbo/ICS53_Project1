@@ -134,3 +134,18 @@ int IOSystem::getNumDescriptors(){
 char* IOSystem::getCurrentBlock(){
 	return currentBlock.memory;
 }
+
+int IOSystem::findFreeDescriptor(){
+	for (int i = 0; i < 14; ++i){
+		if(cache[i].isFree()){
+			cache[i].setAllocated();
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void IOSystem::freeFileDescriptor(int index){
+	cache[index].initialize();
+}
