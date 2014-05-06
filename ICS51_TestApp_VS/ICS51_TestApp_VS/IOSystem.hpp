@@ -11,14 +11,10 @@ class IOSystem
 		bool bitmap[4][8];
 
 		struct FileDescriptor{
-			char symbolicName[10];
 			unsigned char fileSize;
 			unsigned char blockLocations[3];
 
 			FileDescriptor(){
-				for (int i = 0; i < 10; i++){
-					symbolicName[i] = 0;
-				}
 				fileSize = 0;
 				for (int i = 0; i < 3; i++){
 					blockLocations[i] = 0;
@@ -26,16 +22,10 @@ class IOSystem
 			}
 
 			bool isEmpty(){
-				return symbolicName[0] == 0;
+				return blockLocations[0] == 0;
 			}
 
 			friend std::ostream& operator <<(std::ostream& os, const FileDescriptor& fd){
-				for (int i = 0; i < 10; i++){
-					if (fd.symbolicName[i] == 0){
-						break;
-					}
-					os << fd.symbolicName[i];
-				}
 				os << std::endl;
 				os << (int)fd.fileSize << std::endl;
 				for (int i = 0; i < 3; i++){
