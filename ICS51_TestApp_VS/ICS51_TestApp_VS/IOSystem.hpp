@@ -48,10 +48,10 @@ class IOSystem
 
 		struct Block{
 
-			char memory[64];
+			char memory[4];
 
 			Block(){
-				for (int i = 0; i < 64; i++){
+				for (int i = 0; i < 4; i++){
 					memory[i] = 0;
 				}
 			}

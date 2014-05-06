@@ -15,6 +15,11 @@ FileSystem::FileSystem(IOSystem* iosystem){
 }
 
 int FileSystem::open(std::string symbolicName){
-	return 1;
+	for (int i = 0; i < 14; i++){
+		for (int j = 0; symbolicName[j] != 0; j++){
+			if ()
+		}
+	}
+	return -1;
 }
 

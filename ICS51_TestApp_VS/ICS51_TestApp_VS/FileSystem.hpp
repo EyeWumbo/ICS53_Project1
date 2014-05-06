@@ -11,10 +11,15 @@ private:
 		char bufferReader[64];
 		int currentPosition;
 		int fileDescriptorIndex;
+
+		OFT(){
+			currentPosition = -1;
+			fileDescriptorIndex = -1;
+		}
+
 	};
 
 	FileSystem::OFT openFileTable[3];
-
 	IOSystem* iosystem;
 
 public:
