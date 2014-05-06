@@ -35,6 +35,12 @@ private:
 			symbolic_file_name = name;
 			descriptorIndex = index;
 		}
+
+		dirEntry(){
+			symbolic_file_name = "";
+			descriptorIndex = -1;
+		}
+
 	};
 
 	dirEntry dir[14];

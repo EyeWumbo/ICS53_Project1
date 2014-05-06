@@ -10,7 +10,7 @@ FileSystem::FileSystem(IOSystem* iosystem){
 	this->iosystem = iosystem;
 
 	for(int i = 0; i < 14; i ++){
-		dir[i] = dirEntry();
+		dir[i] = dirEntry("", -1);
 	}
 	for(int i = 0; i < 3; i ++){
 		openFileTable[i] = OFT();
@@ -78,7 +78,7 @@ void FileSystem::directory(){
 		dirEntry entry = dir[i];
 		if (&entry){
 			char* fileDesc = new char[64];
-			iosystem->read_block(entry.indexForDesc, fileDesc);
+			iosystem->read_block(entry.descriptorIndex, fileDesc);
 			std::cout << entry.symbolic_file_name << " " << fileDesc[0] << std::endl;
 		}
 	}
@@ -88,8 +88,8 @@ int FileSystem::create(string symbolic_file_name){
 	char* current = new char[64];
 
 	for (int i = 0; i < 14; ++i){
-		dirEntry* currentDirEntry = dir[i];
-		if(currentDirEntry->symbolic_file_name.compare(symbolic_file_name) == 0)
+		dirEntry currentDirEntry = dir[i];
+		if(currentDirEntry.symbolic_file_name.compare(symbolic_file_name) == 0)
 			return -2;
 	}
 
@@ -101,10 +101,14 @@ int FileSystem::create(string symbolic_file_name){
 
 	for(int i = 0; i < 14 && currentDirEntry == nullptr; i++)
 	{
-		if(dir[i] == nullptr){
-			currentDirEntry = new dirEntry(symbolic_file_name, descriptorIndex);
-			dir[i] = d;
-		}
+		//if(dir[i] == nullptr){
+		//	currentDirEntry = new dirEntry(symbolic_file_name, descriptorIndex);
+		//	dir[i] = d;
+		//}
+
+		currentDirEntry = new dirEntry(symbolic_file_name, descriptorIndex);
+		dir[i] = *currentDirEntry;
+
 	}
 	
 	return 0;
@@ -114,11 +118,12 @@ int FileSystem::deleteFile(string fileName){
 	int descriptorIndex = -1;
 
 	for (int i = 0; i < 14 && descriptorIndex == -1; ++i){
-		dirEntry* currentDirEntry = dir[i];
-		if(currentDirEntry->symbolic_file_name.compare(fileName) == 0)
+		dirEntry currentDirEntry = dir[i];
+		if(currentDirEntry.symbolic_file_name.compare(fileName) == 0)
 		{
-			descriptorIndex = currentDirEntry->descriptorIndex;
-			delete currentDirEntry;
+			descriptorIndex = currentDirEntry.descriptorIndex;
+			//delete currentDirEntry;
+			dir[i] = dirEntry("", -1);
 		}
 	}
 	
