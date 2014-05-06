@@ -49,6 +49,9 @@ public:
 	void directory();
 	int create(string symbolic_file_name);
 	int deleteFile(string fileName);
+	int read(int index, char* mem_area, int count);
+	int write(int index, char value, int count);
+	int lseek(int index, int pos);
 };
 
 #endif
