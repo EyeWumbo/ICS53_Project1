@@ -24,7 +24,7 @@ private:
 		int indexForDesc;
 	};
 
-	dirEntry directory[];
+	dirEntry directory[14];
 	FileSystem::OFT openFileTable[3];
 	IOSystem* iosystem;
 
