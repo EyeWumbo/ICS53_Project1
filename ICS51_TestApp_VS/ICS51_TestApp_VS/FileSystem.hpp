@@ -15,6 +15,13 @@ private:
 		OFT(){
 			currentPosition = -1;
 			fileDescriptorIndex = -1;
+			for (int i = 0; i < 64; i++){
+				bufferReader[i] = 0;
+			}
+		}
+
+		bool isEmpty(){
+			return currentPosition == -1;
 		}
 
 	};

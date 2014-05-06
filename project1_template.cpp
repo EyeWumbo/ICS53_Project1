@@ -247,7 +247,23 @@ class FileSystem53 {
 	 *    index: index if open file table if successfully allocated.
 	 *    Return -1 for error.
 	 */
-	int open_desc(int desc_no);
+	int open_desc(int desc_no){
+		if (file_no > 13){
+			return -1;
+		}
+		for (int i = 0; i < 3; i++){
+			if (openFileTable[i].isEmpty()){
+				openFileTable[i].currentPosition = 0;
+				openFileTable[i].fileDescriptorIndex = file_no;
+				iosystem->read_block(i, 0);
+				for (int j = 0; j < 64; j++){
+					openFileTable[i].bufferReader[j] = iosystem->getCurrentBlock()[j];
+				}
+				return file_no;
+			}
+		}
+		return -1;
+	}
 
 
 	/* Open file with file name function:
@@ -266,7 +282,36 @@ class FileSystem53 {
 			//    Return -2 if all entry are occupied.
 			// 5. Initialize the entry (descriptor number, current position, etc.)
 			// 6. Return entry number
-	int open(string symbolic_file_name);
+	int open(string symbolic_file_name){
+		for (int i = 0; i < 14; i++){
+			bool match = true;
+			for (int j = 0; symbolicName[j] != 0; j++){		
+				if (dir[i].symbolic_file_name[j] != symbolicName[j]){
+					match = false;
+					break;
+				}
+			}
+			if (match){
+				bool spaceAvailable = false;
+				for (int j = 0; j < 3; j++){
+					if (openFileTable[j].isEmpty()){
+						openFileTable[j].currentPosition = 0;
+						openFileTable[j].fileDescriptorIndex = i;
+						iosystem->read_block(i, 0);
+						for (int k = 0; k < 64; k++){
+							openFileTable[j].bufferReader[k] = iosystem->getCurrentBlock()[k];
+						}
+						spaceAvailable = true;
+					}
+				}
+				if (!spaceAvailable){
+					return -1;
+				}
+				return i;
+			}
+		}
+		return -1;
+	}
 
 
 	/* File Read function:
@@ -331,7 +376,12 @@ class FileSystem53 {
 	 * Return:
 	 *    none
 	 */
-	void close(int index);
+	void close(int index){
+		if (openFileTable[index].isEmpty()){
+			return;
+		}
+		openFileTable[index] = OFT();
+	}
 
 
 	/* Delete file function:
@@ -354,7 +404,16 @@ class FileSystem53 {
 	 * Return:
 	 *    None
 	 */
-	void directory();
+	void directory(){
+		for (int i=0; i < 14; i++){
+			dirEntry entry = dir[i];
+			if (&entry){
+				char* fileDesc = new char[64];
+				iosystem->read_block(entry.indexForDesc, fileDesc);
+				std::cout << entry.symbolic_file_name << " " << fileDesc[0] << std::endl;
+			}
+		}
+	}
 
 	/*------------------------------------------------------------------
 	  Disk management functions.

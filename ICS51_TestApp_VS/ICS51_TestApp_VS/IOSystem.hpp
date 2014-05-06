@@ -38,10 +38,10 @@ class IOSystem
 
 		struct Block{
 
-			char memory[4];
+			char memory[64];
 
 			Block(){
-				for (int i = 0; i < 4; i++){
+				for (int i = 0; i < 64; i++){
 					memory[i] = 0;
 				}
 			}
@@ -80,6 +80,7 @@ class IOSystem
 		void restore();
 		int getNumDescriptors();
 		int getNumBlocks();
+		char* getCurrentBlock();
 };
 
 #endif

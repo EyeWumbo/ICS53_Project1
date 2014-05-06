@@ -130,3 +130,7 @@ int IOSystem::getNumBlocks(){
 int IOSystem::getNumDescriptors(){
 	return this->L;
 }
+
+char* IOSystem::getCurrentBlock(){
+	return currentBlock.memory;
+}
