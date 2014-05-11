@@ -90,8 +90,6 @@ void IOSystem::restore(){
 			}
 		}
 		saveFile.close();
-		std::cout << ldisk[52] << std::endl;
-		std::cin >> line;
 	}
 	else{
 		std::cout << "It brokedededed" << std::endl;
@@ -104,7 +102,7 @@ void IOSystem::save(){
 
 	std::ofstream saveFile("saveFile.txt");
 	for (int i = 0; i < 14; i++){
-		if (cache[i].isFree()){
+		if (cache[i].isOpen()){
 			continue;
 		}
 		saveFile << i << std::endl;
@@ -137,12 +135,11 @@ char* IOSystem::getCurrentBlock(){
 
 int IOSystem::findFreeDescriptor(){
 	for (int i = 0; i < 14; ++i){
-		if(cache[i].isFree()){
+		if(cache[i].isOpen()){
 			cache[i].setAllocated();
 			return i;
 		}
 	}
-
 	return -1;
 }
 

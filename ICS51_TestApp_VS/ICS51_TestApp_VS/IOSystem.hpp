@@ -29,7 +29,7 @@ class IOSystem
 				}
 			}
 
-			bool isFree(){
+			bool isOpen(){
 				return isFree;
 			}
 
