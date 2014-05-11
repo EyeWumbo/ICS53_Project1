@@ -8,8 +8,8 @@ using namespace std;
 
 IOSystem::IOSystem(int l, int b)
 {
-	this->L = l;
-	this->B = b;
+	this->L = 64;
+	this->B = 64;
 
 	/*for (int i = 0; i < 4; i++){
 		for (int j = 0; j < 7; j++){
@@ -83,9 +83,10 @@ void IOSystem::restore(){
 		}*/
 
 		for (int i = 0; i < 64; i++){
-			getline(saveFile, line);
+			
 			for (int j = 0; j < 64; j++){
-				ldisk[i][j] = line[j];
+				getline(saveFile, line, " "[0]);
+				ldisk[i][j] = std::atoi(line.c_str());
 			}
 		}
 
@@ -120,7 +121,7 @@ void IOSystem::save(){
 
 	for (int i = 0; i < 64; i++){
 		for (int j = 0; j < 64; j++){
-			saveFile << ldisk[i][j];
+			saveFile << (int)(ldisk[i][j]) << " ";
 		}
 		saveFile << std::endl;
 	}

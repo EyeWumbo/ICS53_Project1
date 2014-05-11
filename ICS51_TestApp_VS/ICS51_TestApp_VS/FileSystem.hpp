@@ -24,6 +24,14 @@ private:
 			return currentPosition == -1;
 		}
 
+		void clear(){
+			currentPosition = -1;
+			fileDescriptorIndex = -1;
+			for (int i = 0; i < 64; i++){
+				bufferReader[64] = 0;
+			}
+		}
+
 	};
 	
 	struct dirEntry{
@@ -51,6 +59,8 @@ private:
 	OFT openFileTable[3];
 	IOSystem* iosystem;
 	char tempBuffer[64];
+
+	unsigned char convertSize(const char arg);
 
 public:
 	FileSystem(IOSystem* iosystem);

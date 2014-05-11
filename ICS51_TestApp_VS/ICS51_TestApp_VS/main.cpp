@@ -11,10 +11,14 @@ int main()
 	//system.restore();
 	FileSystem fSystem = FileSystem(&system);
 
+	
+	
 	//Creation Test
 	std::cout << "Creation test begin." << std::endl << std::endl;
 	fSystem.create("hallo0");
+	
 	fSystem.create("hallo0");
+	
 	fSystem.create("hallo1");
 	fSystem.create("hallo2");
 	fSystem.create("hallo3");
@@ -31,25 +35,29 @@ int main()
 	fSystem.create("hallo13");
 	fSystem.create("hallo14");
 	std::cout << std::endl;
-
-	//Deletion Test
+	
+	////Deletion Test
 	std::cout << "Deletion test begin." << std::endl << std::endl;
 	fSystem.deleteFile("hallo0");
-	fSystem.create("hallo15");
+	//fSystem.create("hallo15");
 
-	fSystem.deleteFile("hallo0");
-	fSystem.deleteFile("hallo9");
-	fSystem.create("hallo16");
-	std::cout << std::endl;
+	fSystem.directory();
 
-	////Open Test
-	std::cout << "Open test begin." << std::endl << std::endl;
-	fSystem.open("hallo1");
-	fSystem.open("hallo17");
-	fSystem.open("hallo2");
-	fSystem.open("hallo3");
-	fSystem.open("hallo4");
-	std::cout << std::endl;
+	//fSystem.deleteFile("hallo0");
+	//fSystem.deleteFile("hallo9");
+	//fSystem.create("hallo16");
+	//std::cout << std::endl;
+
+	//////Open Test
+	//std::cout << "Open test begin." << std::endl << std::endl;
+	//fSystem.open("hallo1");
+	//fSystem.open("hallo17");
+	//fSystem.open("hallo2");
+	//fSystem.open("hallo3");
+	//fSystem.open("hallo4");
+	//std::cout << std::endl;
+
+	
 
 	////Close Test
 	//std::cout << "Close test begin." << std::endl << std::endl;
@@ -75,6 +83,7 @@ int main()
 	//fSystem.close(5);
 
 	system.save();
+	system.restore();
 
 	std::string temp;
 	std::cin >> temp;
