@@ -1,3 +1,10 @@
+//============================================================================
+// Author      : Leonard Bejosano, Melody Truong, TC Nguyen, Steven Zhang
+// Version     : 0.1.2.1.2a
+// Copyright   : Your copyright notice
+// Description : First Project Lab
+//============================================================================
+
 #ifndef IOSYSTEM_HPP
 #define IOSYSTEM_HPP
 

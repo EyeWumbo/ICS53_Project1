@@ -1,3 +1,10 @@
+//============================================================================
+// Author      : Leonard Bejosano, Melody Truong, TC Nguyen, Steven Zhang
+// Version     : 0.1.2.1.2a
+// Copyright   : Your copyright notice
+// Description : First Project Lab
+//============================================================================
+
 #ifndef FILESYSTEM_HPP
 #define FILESYSTEM_HPP
 
@@ -55,6 +62,9 @@ public:
 	void directory();
 	int create(string symbolic_file_name);
 	int deleteFile(string fileName);
+	int read(int index, char* mem_area, int count);
+	int FileSystem::write(int index, char value, int count);
+	int FileSystem::lseek(int index, int pos);
 };
 
 #endif

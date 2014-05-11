@@ -1,3 +1,10 @@
+//============================================================================
+// Author      : Leonard Bejosano, Melody Truong, TC Nguyen, Steven Zhang
+// Version     : 0.1.2.1.2a
+// Copyright   : Your copyright notice
+// Description : First Project Lab
+//============================================================================
+
 #include "stdafx.h"
 #include <fstream>
 #include <iostream>

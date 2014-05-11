@@ -1,3 +1,10 @@
+//============================================================================
+// Author      : Leonard Bejosano, Melody Truong, TC Nguyen, Steven Zhang
+// Version     : 0.1.2.1.2a
+// Copyright   : Your copyright notice
+// Description : First Project Lab
+//============================================================================
+
 #include "stdafx.h"
 #include "FileSystem.hpp"
 #include <iostream>
@@ -156,10 +163,10 @@ int FileSystem::read(int index, char* mem_area, int count)
 
 int FileSystem::write(int index, char value, int count)
 {
-    iosystem->write_block(i, openFileTable[index].bufferReader);
+    iosystem->write_block(index, openFileTable[index].bufferReader);
     for(int i=0; i<64; i++)
     {
-        currentBlock[i] = bufferReader[i];
+        iosystem->getCurrentBlock()[i] = openFileTable[index].bufferReader[i];
     }
     
     return 1;
