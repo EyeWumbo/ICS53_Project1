@@ -30,11 +30,21 @@ private:
 		std::string symbolic_file_name;
 		int descriptorIndex;
 
+		dirEntry(){
+			symbolic_file_name = "";
+			descriptorIndex = -1;
+		}
+
 		dirEntry(std::string name, int index)
 		{
 			symbolic_file_name = name;
 			descriptorIndex = index;
 		}
+
+		bool isEmpty(){
+			return descriptorIndex == -1;
+		}
+
 	};
 
 	dirEntry dir[14];

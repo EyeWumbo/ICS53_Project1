@@ -78,7 +78,7 @@ void FileSystem::directory(){
 		dirEntry entry = dir[i];
 		if (&entry){
 			char* fileDesc = new char[64];
-			iosystem->read_block(entry.indexForDesc, fileDesc);
+			iosystem->read_block(entry.descriptorIndex, fileDesc);
 			std::cout << entry.symbolic_file_name << " " << fileDesc[0] << std::endl;
 		}
 	}
@@ -88,22 +88,21 @@ int FileSystem::create(string symbolic_file_name){
 	char* current = new char[64];
 
 	for (int i = 0; i < 14; ++i){
-		dirEntry* currentDirEntry = dir[i];
-		if(currentDirEntry->symbolic_file_name.compare(symbolic_file_name) == 0)
+		dirEntry currentDirEntry = dir[i];
+		if(currentDirEntry.symbolic_file_name.compare(symbolic_file_name) == 0)
 			return -2;
 	}
 
 	int descriptorIndex = iosystem->findFreeDescriptor();
-	dirEntry* currentDirEntry = nullptr;
 	
 	if(descriptorIndex != -1)
 		return -1;
 
-	for(int i = 0; i < 14 && currentDirEntry == nullptr; i++)
+	for(int i = 0; i < 14; i++)
 	{
-		if(dir[i] == nullptr){
-			currentDirEntry = new dirEntry(symbolic_file_name, descriptorIndex);
-			dir[i] = d;
+		if(dir[i].isEmpty()){
+			dir[i] = dirEntry(symbolic_file_name, descriptorIndex);
+			break;
 		}
 	}
 	
@@ -114,11 +113,10 @@ int FileSystem::deleteFile(string fileName){
 	int descriptorIndex = -1;
 
 	for (int i = 0; i < 14 && descriptorIndex == -1; ++i){
-		dirEntry* currentDirEntry = dir[i];
-		if(currentDirEntry->symbolic_file_name.compare(fileName) == 0)
+		dirEntry currentDirEntry = dir[i];
+		if(currentDirEntry.symbolic_file_name.compare(fileName) == 0)
 		{
-			descriptorIndex = currentDirEntry->descriptorIndex;
-			delete currentDirEntry;
+			descriptorIndex = currentDirEntry.descriptorIndex;
 		}
 	}
 	
@@ -151,11 +149,7 @@ int FileSystem::read(int index, char* mem_area, int count)
 
 int FileSystem::write(int index, char value, int count)
 {
-    iosystem->write_block(i, openFileTable[index].bufferReader);
-    for(int i=0; i<64; i++)
-    {
-        currentBlock[i] = bufferReader[i];
-    }
+    iosystem->write_block(index, openFileTable[index].bufferReader);
     
     return 1;
 }
