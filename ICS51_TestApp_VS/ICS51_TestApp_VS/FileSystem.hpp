@@ -57,8 +57,8 @@ public:
 	int open_desc(int desc_no);
 	void close(int index);
 	void directory();
-	int create(string symbolic_file_name);
-	int deleteFile(string fileName);
+	int create(std::string symbolic_file_name);
+	int deleteFile(std::string fileName);
 	int read(int index, char* mem_area, int count);
 	int write(int index, char value, int count);
 	int lseek(int index, int pos);

@@ -16,13 +16,6 @@ class IOSystem
 			bool isFree;
 
 			FileDescriptor(){
-				fileSize = 0;
-				for (int i = 0; i < 3; i++){
-					blockLocations[i] = 0;
-				}
-			}
-
-			FileDescriptor(){
 				initialize();
 			}
 

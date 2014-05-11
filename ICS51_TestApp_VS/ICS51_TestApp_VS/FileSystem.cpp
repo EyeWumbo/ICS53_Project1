@@ -32,10 +32,7 @@ int FileSystem::open(std::string symbolicName){
 				if (openFileTable[j].isEmpty()){
 					openFileTable[j].currentPosition = 0;
 					openFileTable[j].fileDescriptorIndex = i;
-					iosystem->read_block(i, 0);
-					for (int k = 0; k < 64; k++){
-						openFileTable[j].bufferReader[k] = iosystem->getCurrentBlock()[k];
-					}
+					iosystem->read_block(i, openFileTable[j].bufferReader);
 					spaceAvailable = true;
 				}
 			}
@@ -56,10 +53,8 @@ int FileSystem::open_desc(int file_no){
 		if (openFileTable[i].isEmpty()){
 			openFileTable[i].currentPosition = 0;
 			openFileTable[i].fileDescriptorIndex = file_no;
-			iosystem->read_block(i, 0);
-			for (int j = 0; j < 64; j++){
-				openFileTable[i].bufferReader[j] = iosystem->getCurrentBlock()[j];
-			}
+			iosystem->read_block(i, openFileTable[i].bufferReader);
+
 			return file_no;
 		}
 	}
@@ -157,7 +152,7 @@ int FileSystem::write(int index, char value, int count)
 int FileSystem::lseek(int index, int pos)
 {
     int position = pos/64;
-    iosystem->read_block(index + position);
+    iosystem->read_block(index + position, openFileTable[index].bufferReader);
     openFileTable[index].currentPosition = pos-64*position;
     
     return 1;

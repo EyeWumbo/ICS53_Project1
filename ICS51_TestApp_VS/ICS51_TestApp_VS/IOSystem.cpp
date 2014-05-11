@@ -25,7 +25,7 @@ IOSystem::IOSystem(int l, int b)
 		ldisk[i] = Block();
 	}
 
-	std::string lel = "and so with the power of greyskull shit happened the end";
+	std::string lel = "professional looking text";
 	for (int i = 0; i < 64; i++){
 		if (lel[i] == '\0'){
 			break;
@@ -104,7 +104,7 @@ void IOSystem::save(){
 
 	std::ofstream saveFile("saveFile.txt");
 	for (int i = 0; i < 14; i++){
-		if (cache[i].isEmpty()){
+		if (cache[i].isFree()){
 			continue;
 		}
 		saveFile << i << std::endl;
