@@ -8,50 +8,11 @@ class IOSystem
 	private:
 		int L;
 		int B;
-		bool bitmap[4][8];
-
-		struct FileDescriptor{
-			unsigned char fileSize;
-			unsigned char blockLocations[3];
-			bool isFree;
-
-			FileDescriptor(){
-				initialize();
-			}
-
-			//resets parameters
-			void initialize()
-			{
-				fileSize = 0;
-				isFree = true;
-				for (int i = 0; i < 3; ++i){
-					blockLocations[i] = 0;
-				}
-			}
-
-			bool isOpen(){
-				return isFree;
-			}
-
-			void setAllocated()
-			{
-				isFree = false;
-			}
-
-			friend std::ostream& operator <<(std::ostream& os, const FileDescriptor& fd){
-				os << std::endl;
-				os << (int)fd.fileSize << std::endl;
-				for (int i = 0; i < 3; i++){
-					os << (int)fd.blockLocations[i] << std::endl;
-				}
-				return os;
-			}
-
-		};
+		//bool bitmap[4][8];
 
 		struct Block{
 
-			char memory[64];
+			unsigned char memory[64];
 
 			Block(){
 				for (int i = 0; i < 64; i++){
@@ -79,10 +40,57 @@ class IOSystem
 
 		};
 
-		FileDescriptor cache[14];
-		Block ldisk[64];
+		//struct FileDescriptor : Block{
+		//	unsigned char fileSizeOne;
+		//	unsigned char blockLocationsOne[3];
+		//	unsigned char fileSizeTwo;
+		//	unsigned char blockLocationsTwo[3];
+		//	bool isFree;
 
-		Block currentBlock;
+		//	FileDescriptor(){
+		//		initialize();
+		//	}
+
+		//	//resets parameters
+		//	void initialize()
+		//	{
+		//		fileSizeOne = 0;
+		//		fileSizeTwo = 0;
+		//		isFree = true;
+		//		for (int i = 0; i < 3; ++i){
+		//			blockLocationsOne[i] = 0;
+		//			blockLocationsTwo[i] = 0;
+		//		}
+		//	}
+
+		//	bool isOpen(){
+		//		return isFree;
+		//	}
+
+		//	void setAllocated()
+		//	{
+		//		isFree = false;
+		//	}
+
+		//	friend std::ostream& operator <<(std::ostream& os, const FileDescriptor& fd){
+		//		os << std::endl;
+		//		os << (int)fd.fileSizeOne << std::endl;
+		//		for (int i = 0; i < 3; i++){
+		//			os << (int)fd.blockLocationsOne[i] << std::endl;
+		//		}
+		//		os << (int)fd.fileSizeTwo << std::endl;
+		//		for (int i = 0; i < 3; i++){
+		//			os << (int)fd.blockLocationsTwo[i] << std::endl;
+		//		}
+		//		return os;
+		//	}
+
+		//};
+
+		//FileDescriptor cache[14];
+		unsigned char ldisk[64][64];
+
+		//Block currentBlock;
 	
 	public:
 		IOSystem(int l, int b);

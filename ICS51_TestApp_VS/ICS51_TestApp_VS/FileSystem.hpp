@@ -50,6 +50,7 @@ private:
 	dirEntry dir[14];
 	OFT openFileTable[3];
 	IOSystem* iosystem;
+	char tempBuffer[64];
 
 public:
 	FileSystem(IOSystem* iosystem);

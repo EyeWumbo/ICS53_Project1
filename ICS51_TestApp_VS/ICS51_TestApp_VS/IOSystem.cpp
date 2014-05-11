@@ -11,26 +11,20 @@ IOSystem::IOSystem(int l, int b)
 	this->L = l;
 	this->B = b;
 
-	for (int i = 0; i < 4; i++){
+	/*for (int i = 0; i < 4; i++){
 		for (int j = 0; j < 7; j++){
 			bitmap[i][j] = false;
 		}
-	}
+	}*/
 
-	for (int i = 0; i < 14; i++){
-		cache[i] = FileDescriptor();
-	}
+	/*for (int i = 1; i < 14; i++){
+		ldisk[i] = FileDescriptor();
+	}*/
 
 	for (int i = 0; i < 64; i++){	
-		ldisk[i] = Block();
-	}
-
-	std::string lel = "professional looking text";
-	for (int i = 0; i < 64; i++){
-		if (lel[i] == '\0'){
-			break;
+		for (int j = 0; j < 64; j++){
+			ldisk[i][j] = 0;
 		}
-		ldisk[52].memory[i] = lel[i];
 	}
 	
 
@@ -42,21 +36,19 @@ IOSystem::~IOSystem(){
 
 void IOSystem::read_block(int i, char* p)
 {	
-	for (int b = 0; b < B; b++)
+	for (int b = 0; b < 64; b++)
 	{
-		Block c = ldisk[i];
-		currentBlock = c;
+		p[b] = ldisk[i][b];
 	}
 }
 
 void IOSystem::write_block(int i, char* p)
 {	
-	/*for (int b = 0; b < B; b++)
+	for (int b = 0; b < 64; b++)
 	{
-		char c = p[b];
-		ldisk[i][b] = c;
-	}*/
-	ldisk[i] = currentBlock;
+		ldisk[i][b] = p[b];
+	}
+	
 }
 
 void IOSystem::restore(){
@@ -64,7 +56,7 @@ void IOSystem::restore(){
 	std::string line;
 	std::ifstream saveFile("saveFile.txt");
 	if (saveFile.is_open()){
-		while (getline(saveFile, line)){
+		/*while (getline(saveFile, line)){
 			std::stringstream ss;
 			ss << line;
 			int cacheNumber;
@@ -88,7 +80,15 @@ void IOSystem::restore(){
 			for (int i = 0; line[i] != 0; i++){
 				ldisk[blockNumber].memory[i] = line[i];
 			}
+		}*/
+
+		for (int i = 0; i < 64; i++){
+			getline(saveFile, line);
+			for (int j = 0; j < 64; j++){
+				ldisk[i][j] = line[j];
+			}
 		}
+
 		saveFile.close();
 	}
 	else{
@@ -101,7 +101,7 @@ void IOSystem::restore(){
 void IOSystem::save(){
 
 	std::ofstream saveFile("saveFile.txt");
-	for (int i = 0; i < 14; i++){
+	/*for (int i = 0; i < 14; i++){
 		if (cache[i].isOpen()){
 			continue;
 		}
@@ -116,33 +116,37 @@ void IOSystem::save(){
 		}
 		saveFile << i << std::endl;
 		saveFile << ldisk[i];
+	}*/
+
+	for (int i = 0; i < 64; i++){
+		for (int j = 0; j < 64; j++){
+			saveFile << ldisk[i][j];
+		}
+		saveFile << std::endl;
 	}
+
 	saveFile.close();
 
 }
-
-int IOSystem::getNumBlocks(){
-	return this->B;
-}
-
-int IOSystem::getNumDescriptors(){
-	return this->L;
-}
-
-char* IOSystem::getCurrentBlock(){
-	return currentBlock.memory;
-}
-
-int IOSystem::findFreeDescriptor(){
-	for (int i = 0; i < 14; ++i){
-		if(cache[i].isOpen()){
-			cache[i].setAllocated();
-			return i;
-		}
-	}
-	return -1;
-}
-
-void IOSystem::freeFileDescriptor(int index){
-	cache[index].initialize();
-}
+//
+//int IOSystem::getNumBlocks(){
+//	return this->B;
+//}
+//
+//int IOSystem::getNumDescriptors(){
+//	return this->L;
+//}
+//
+//int IOSystem::findFreeDescriptor(){
+//	for (int i = 0; i < 14; ++i){
+//		if(cache[i].isOpen()){
+//			cache[i].setAllocated();
+//			return i;
+//		}
+//	}
+//	return -1;
+//}
+//
+//void IOSystem::freeFileDescriptor(int index){
+//	cache[index].initialize();
+//}

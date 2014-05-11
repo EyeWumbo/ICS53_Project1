@@ -7,12 +7,13 @@
 int main()
 {
 	IOSystem system = IOSystem(10,5);
-	system.save();
-	system.restore();
+	
+	//system.restore();
 	FileSystem fSystem = FileSystem(&system);
 
 	//Creation Test
 	std::cout << "Creation test begin." << std::endl << std::endl;
+	fSystem.create("hallo0");
 	fSystem.create("hallo0");
 	fSystem.create("hallo1");
 	fSystem.create("hallo2");
@@ -41,7 +42,7 @@ int main()
 	fSystem.create("hallo16");
 	std::cout << std::endl;
 
-	//Open Test
+	////Open Test
 	std::cout << "Open test begin." << std::endl << std::endl;
 	fSystem.open("hallo1");
 	fSystem.open("hallo17");
@@ -50,24 +51,30 @@ int main()
 	fSystem.open("hallo4");
 	std::cout << std::endl;
 
-	//Close Test
-	std::cout << "Close test begin." << std::endl << std::endl;
-	fSystem.close(0);
-	fSystem.close(2);
-	fSystem.close(0);
-	fSystem.close(2);
-	fSystem.close(3);
-	std::cout << std::endl;
+	////Close Test
+	//std::cout << "Close test begin." << std::endl << std::endl;
+	//fSystem.close(0);
+	//fSystem.close(2);
+	//fSystem.close(0);
+	//fSystem.close(2);
+	//fSystem.close(3);
+	//std::cout << std::endl;
 
-	//Open Description Files
-	std::cout << "Open Description test begin." << std::endl << std::endl;
-	fSystem.open_desc(2);
-	fSystem.open_desc(21);
-	fSystem.open_desc(3);
-	fSystem.deleteFile("hallo4");
-	fSystem.open_desc(4);
-	fSystem.open_desc(5);
-	std::cout << std::endl;
+	////Open Description Files
+	//std::cout << "Open Description test begin." << std::endl << std::endl;
+	//fSystem.open_desc(2);
+	//fSystem.open_desc(21);
+	//fSystem.open_desc(3);
+	//fSystem.deleteFile("hallo4");
+	//fSystem.open_desc(4);
+	//fSystem.open_desc(5);
+	//std::cout << std::endl;
+
+	//fSystem.close(2);
+	//fSystem.close(3);
+	//fSystem.close(5);
+
+	system.save();
 
 	std::string temp;
 	std::cin >> temp;
