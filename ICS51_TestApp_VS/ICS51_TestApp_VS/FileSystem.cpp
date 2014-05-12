@@ -31,16 +31,19 @@ int FileSystem::open(std::string symbolicName){
 	for (int i = 0; i < 3; i++){
 		if (openFileTable[i].isEmpty()){
 			entry = &openFileTable[i];
+			break;
 		}
 	}
 
 	if (entry == nullptr){
+		std::cout << "No OFT slots available." << std::endl;
 		return -1;
 	}
 
 	for (int i = 1; i < 4; i++){
 		iosystem->read_block(1, tempBuffer);
 		if (tempBuffer[i] == 0){
+			std::cout << "File with name " << symbolicName << " does not exist in the file system." << std::endl;
 			return -1;
 		}
 		iosystem->read_block(tempBuffer[i], tempBuffer);
@@ -58,13 +61,16 @@ int FileSystem::open(std::string symbolicName){
 			if (match){
 				for (int eval = 0; eval < 3; eval++){
 					if (openFileTable[eval].fileDescriptorIndex == tempBuffer[j + 10]){
+						std::cout << "File with name " << symbolicName << " already opened within OFT at slot " << eval << "." << std::endl;
 						return -1;
 					}
 				}
 				entry->fileDescriptorIndex = tempBuffer[j + 10];
+				entry->currentPosition = 0;
 				int tempPosition = tempBuffer[j + 10] / 6 * 4;
 				iosystem->read_block(tempBuffer[j + 10] % 6 + 1, tempBuffer);
 				iosystem->read_block(tempBuffer[tempPosition + 1], entry->bufferReader);
+				std::cout << "Opened file with name " << symbolicName << " to OFT slot " << entry - openFileTable << "." << std::endl;
 				return 1;
 			}
 		}
@@ -77,6 +83,7 @@ int FileSystem::open(std::string symbolicName){
 int FileSystem::open_desc(int file_no){
 
 	if (file_no > 13){
+		std::cout << "Argument passed to file descriptor may not exceed the number of files (14). Arg given was " << file_no << "." << std::endl;
 		return -1;
 	}
 
@@ -88,12 +95,14 @@ int FileSystem::open_desc(int file_no){
 		}
 		else{
 			if (openFileTable[i].fileDescriptorIndex == file_no){
+				std::cout << "File with descriptor index " << file_no << " already occupies slot " << i << " of the OFT." << std::endl;
 				return -1;
 			}
 		}
 	}
 
 	if (entry == nullptr){
+		std::cout << "No open OFT slots found when attempting to open descriptor number " << file_no << "." << std::endl;
 		return -1;
 	}
 
@@ -101,7 +110,7 @@ int FileSystem::open_desc(int file_no){
 	iosystem->read_block(tempBuffer[1], entry->bufferReader);
 	entry->currentPosition = 0;;
 	entry->fileDescriptorIndex = file_no;
-
+	std::cout << "Successfully opened file descriptor of index " << file_no << " to OFT slot " << entry - openFileTable << "." << std::endl;
 	return 1;
 }
 
@@ -116,6 +125,7 @@ void FileSystem::close(int index){
 	}
 
 	if (entry == nullptr){
+		std::cout << "OFT slot with file descriptor index " << index << " not found." << std::endl;
 		return;
 	}
 
@@ -124,8 +134,12 @@ void FileSystem::close(int index){
 	iosystem->write_block(tempBuffer[blockToWrite + 1], entry->bufferReader);
 	tempBuffer[index / 6 * 4] = entry->currentPosition;
 	iosystem->write_block(index % 6 + 1, tempBuffer);
-	entry->clear();
-
+	entry->currentPosition = -1;
+	entry->fileDescriptorIndex = -1;
+	for (int i = 0; i < 64; i++){
+		entry->bufferReader[i] = 0;
+	}
+	std::cout << "OFT slot " << entry - openFileTable << " cleared of file descriptor with index " << index << "." << std::endl;
 }
 
 void FileSystem::directory(){
@@ -322,21 +336,6 @@ int FileSystem::deleteFile(std::string fileName){
 
 int FileSystem::read(int index, char* mem_area, int count)
 {
-    
-    /*iosystem->read_block(index, mem_area);
-    
-    if(open_desc(index) == -1)
-    {
-        return -1;
-    }
-    else
-    {
-        int some_variable = open_desc(index);
-        openFileTable[some_variable];
-        
-        return 1;
-    }*/
-
 	OFT* entry = 0;
 
 	for (int i = 0; i < 3; i++){
