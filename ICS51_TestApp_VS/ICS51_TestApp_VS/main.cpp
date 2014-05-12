@@ -81,7 +81,7 @@ int main()
 
 	//Write Testing
 	fSystem.write(2, 'y', 10);
-	fSystem.write(3, 'x', 64);
+	fSystem.write(3, 'x', 190);
 	std::cout << std::endl;
 
 	fSystem.close(2);
@@ -89,10 +89,10 @@ int main()
 	fSystem.close(5);
 
 	fSystem.open_desc(3);
-	char info[10];
-	fSystem.read(3, info, 10);
+	char info[192];
+	fSystem.read(3, info, 180);
 
-	for (int i = 0; i < 10; i++){
+	for (int i = 0; i < 180; i++){
 		std::cout << info[i];
 	}
 

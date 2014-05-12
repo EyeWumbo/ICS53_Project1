@@ -28,7 +28,7 @@ private:
 			currentPosition = -1;
 			fileDescriptorIndex = -1;
 			for (int i = 0; i < 64; i++){
-				bufferReader[64] = 0;
+				bufferReader[i] = 0;
 			}
 		}
 

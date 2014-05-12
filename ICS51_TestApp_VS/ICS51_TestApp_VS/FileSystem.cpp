@@ -71,7 +71,7 @@ int FileSystem::open(std::string symbolicName){
 				iosystem->read_block(tempBuffer[j + 10] % 6 + 1, tempBuffer);
 				iosystem->read_block(tempBuffer[tempPosition + 1], entry->bufferReader);
 				std::cout << "Opened file with name " << symbolicName << " to OFT slot " << entry - openFileTable << "." << std::endl;
-				return 1;
+				return tempBuffer[j + 10];
 			}
 		}
 
@@ -111,7 +111,7 @@ int FileSystem::open_desc(int file_no){
 	entry->currentPosition = 0;;
 	entry->fileDescriptorIndex = file_no;
 	std::cout << "Successfully opened file descriptor of index " << file_no << " to OFT slot " << entry - openFileTable << "." << std::endl;
-	return 1;
+	return file_no;
 }
 
 void FileSystem::close(int index){
@@ -370,19 +370,18 @@ int FileSystem::read(int index, char* mem_area, int count)
 		if (entry->currentPosition >= 192){
 			return -1;
 		}
-		if (entry->currentPosition % 64 == 0 && entry->currentPosition > 0){
-			int blockToWrite = entry->currentPosition / 64;
+		if (entry->currentPosition % 64 == 0){
+			int blockToRead = entry->currentPosition / 64;
 			iosystem->read_block(index % 6 + 1, tempBuffer);
-			iosystem->write_block(tempBuffer[blockToWrite], entry->bufferReader);
-			if (blockToWrite == 2){
+			if (blockToRead == 3){
 				return -1;
 			}
-			iosystem->read_block(tempBuffer[blockToWrite + 1], entry->bufferReader);
+			iosystem->read_block(tempBuffer[(index / 6 * 4) + blockToRead + 1], entry->bufferReader);
 		}
-		else{
-			mem_area[i] = entry->bufferReader[entry->currentPosition];
-			entry->currentPosition++;
-		}
+		
+		mem_area[i] = entry->bufferReader[entry->currentPosition % 64];
+		entry->currentPosition++;
+		
 	}
 	return 1;
 }
@@ -430,16 +429,28 @@ int FileSystem::write(int index, char value, int count)
 			int blockToWrite = entry->currentPosition / 64;
 			int tempPosition = index / 6 * 4;
 			iosystem->read_block(index % 6 + 1, tempBuffer);
-			iosystem->write_block(tempBuffer[tempPosition + blockToWrite + 1], entry->bufferReader);
+			iosystem->write_block(tempBuffer[tempPosition + blockToWrite], entry->bufferReader);
 			if (blockToWrite == 3){
 				std::cout << "Cannot write, reached block max." << std::endl;
 				return -1;
 			}
-			iosystem->read_block(tempBuffer[tempPosition + blockToWrite+1], entry->bufferReader);
+			if (tempBuffer[tempPosition + blockToWrite + 1] == 0){
+				iosystem->read_block(0, tempBuffer);
+				for (int i = 7; i < 64; i++){
+					if (tempBuffer[i] == 0){
+						tempBuffer[i] = 1;
+						iosystem->write_block(0, tempBuffer);
+						iosystem->read_block(index % 6 + 1, tempBuffer);
+						tempBuffer[tempPosition + blockToWrite + 1] = i;
+						iosystem->write_block(index % 6 + 1, tempBuffer);
+						break;
+					}
+				}
+			}
+			iosystem->read_block(tempBuffer[tempPosition + blockToWrite + 1], entry->bufferReader);
 		}
-		else{
-			entry->bufferReader[entry->currentPosition % 64] = value;
-		}
+		
+		entry->bufferReader[entry->currentPosition % 64] = value;
 		entry->currentPosition++;
 	}
 	int blockToWrite = entry->currentPosition / 64;
