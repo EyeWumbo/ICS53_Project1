@@ -39,14 +39,13 @@ int main()
 	////Deletion Test
 	std::cout << "Deletion test begin." << std::endl << std::endl;
 	fSystem.deleteFile("hallo0");
-	//fSystem.create("hallo15");
+	fSystem.create("hallo15");
+	fSystem.deleteFile("hallo0");
+	fSystem.deleteFile("hallo9");
+	fSystem.create("hallo16");
+	std::cout << std::endl;
 
-	fSystem.directory();
-
-	//fSystem.deleteFile("hallo0");
-	//fSystem.deleteFile("hallo9");
-	//fSystem.create("hallo16");
-	//std::cout << std::endl;
+	
 
 	////Open Test
 	std::cout << "Open test begin." << std::endl << std::endl;
@@ -61,12 +60,14 @@ int main()
 
 	////Close Test
 	std::cout << "Close test begin." << std::endl << std::endl;
-	fSystem.close(0);
-	fSystem.close(2);
-	fSystem.close(0);
+	fSystem.close(1);
 	fSystem.close(2);
 	fSystem.close(3);
+	fSystem.close(4);
+	fSystem.close(5);
 	std::cout << std::endl;
+
+	
 
 	////Open Description Files
 	std::cout << "Open Description test begin." << std::endl << std::endl;
@@ -78,9 +79,26 @@ int main()
 	fSystem.open_desc(5);
 	std::cout << std::endl;
 
+	//Write Testing
+	fSystem.write(2, 'y', 10);
+	fSystem.write(3, 'x', 64);
+	std::cout << std::endl;
+
 	fSystem.close(2);
 	fSystem.close(3);
 	fSystem.close(5);
+
+	fSystem.open_desc(3);
+	char info[10];
+	fSystem.read(3, info, 10);
+
+	for (int i = 0; i < 10; i++){
+		std::cout << info[i];
+	}
+
+	std::cout << std::endl;
+
+	fSystem.directory();
 
 	system.save();
 	system.restore();

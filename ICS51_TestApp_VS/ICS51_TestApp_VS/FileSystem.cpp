@@ -9,9 +9,9 @@ FileSystem::FileSystem(IOSystem* iosystem){
 
 	this->iosystem = iosystem;
 
-	for(int i = 0; i < 14; i ++){
+	/*for(int i = 0; i < 14; i ++){
 		dir[i] = dirEntry();
-	}
+	}*/
 	for(int i = 0; i < 3; i ++){
 		openFileTable[i] = OFT();
 	}
@@ -124,15 +124,30 @@ void FileSystem::close(int index){
 		}
 	}
 
-	if (entry == nullptr){
+	if (entry == 0){
 		std::cout << "OFT slot with file descriptor index " << index << " not found." << std::endl;
+		return;
+	}
+
+	if (entry->currentPosition == 0){
+		entry->currentPosition = -1;
+		entry->fileDescriptorIndex = -1;
+		for (int i = 0; i < 64; i++){
+			entry->bufferReader[i] = 0;
+		}
+		std::cout << "Empty file with descriptor index " << index << " closed. OFT slot " << entry - openFileTable << " freed." << std::endl;
 		return;
 	}
 
 	int blockToWrite = entry->currentPosition / 64;
 	iosystem->read_block(index % 6 + 1, tempBuffer);
 	iosystem->write_block(tempBuffer[blockToWrite + 1], entry->bufferReader);
-	tempBuffer[index / 6 * 4] = entry->currentPosition;
+	if (entry->currentPosition == 0){
+		tempBuffer[index / 6 * 4] = 1;
+	}
+	else{
+		tempBuffer[index / 6 * 4] = entry->currentPosition;
+	}
 	iosystem->write_block(index % 6 + 1, tempBuffer);
 	entry->currentPosition = -1;
 	entry->fileDescriptorIndex = -1;
@@ -259,7 +274,6 @@ int FileSystem::create(std::string symbolic_file_name){
 			iosystem->read_block((fileDescriptorIndex % 6) + 1, tempBuffer);
 			int tempPos = fileDescriptorIndex / 6 * 4;
 			tempBuffer[tempPos] = 1;
-			tempBuffer[tempPos + 1] = blockToWork;
 			iosystem->write_block((fileDescriptorIndex % 6) + 1, tempBuffer);
 			iosystem->read_block(0, tempBuffer);
 			tempBuffer[blockToWork] = 1;
@@ -312,6 +326,7 @@ int FileSystem::deleteFile(std::string fileName){
 					tempBuffer[tempPosition + no] = 0;
 				}
 				iosystem->write_block((temp2 % 6) + 1, tempBuffer);
+				
 				for (int no = 0; no < 3; no++){
 					if (blocksToClear[no] == 0){
 						break;
@@ -321,6 +336,9 @@ int FileSystem::deleteFile(std::string fileName){
 						tempBuffer[plz] = 0;
 					}
 					iosystem->write_block(blocksToClear[no], tempBuffer);
+					iosystem->read_block(0, tempBuffer);
+					tempBuffer[blocksToClear[no]] = 0;
+					iosystem->write_block(0, tempBuffer);
 				}
 				iosystem->read_block(1, tempBuffer);
 				tempBuffer[0] -= 11;
@@ -371,10 +389,7 @@ int FileSystem::read(int index, char* mem_area, int count)
 
 int FileSystem::write(int index, char value, int count)
 {
-    
-	/*for (int i = 0; i < count; i++){
-		openFileTable[index].bufferReader[openFileTable[index].currentPosition] = value;
-	}*/
+
 	OFT* entry = 0;
 	for (int i = 0; i < 3; i++){
 		if (openFileTable[i].fileDescriptorIndex == index){
@@ -383,36 +398,74 @@ int FileSystem::write(int index, char value, int count)
 	}
 
 	if (entry == nullptr){
+		std::cout << "Index " << index << " not found in the OFT." << std::endl;
 		return -1;
 	}
 
+	if (entry->currentPosition + count > 192){
+		std::cout << "Cannot write " << count << " bytes to file with index " << index << " at buffer position " << entry->currentPosition << "." << std::endl;
+	}
+
+	iosystem->read_block(index % 6 + 1, tempBuffer);
+	if (tempBuffer[index / 6 * 4 + (entry->currentPosition / 64 + 1)] == 0){
+		iosystem->read_block(0, tempBuffer);
+		for (int i = 7; i < 64; i++){			
+			if (tempBuffer[i] == 0){
+				tempBuffer[i] = 1;
+				iosystem->write_block(0, tempBuffer);
+				iosystem->read_block(index % 6 + 1, tempBuffer);
+				tempBuffer[index / 6 * 4 + (entry->currentPosition / 64 + 1)] = i;
+				iosystem->write_block(index % 6 + 1, tempBuffer);
+				iosystem->read_block(i, tempBuffer);
+				break;
+			}
+		}
+	}
 	for (int i = 0; i < count; i++){
 		if (entry->currentPosition >= 192){
+			std::cout << "Cannot write, file overflow." << std::endl;
 			return -1;
 		}
-		if (entry->currentPosition % 64 == 0 && entry->currentPosition > 0){
+		if (entry->currentPosition % 64 == 0 && entry->currentPosition != 0){
 			int blockToWrite = entry->currentPosition / 64;
+			int tempPosition = index / 6 * 4;
 			iosystem->read_block(index % 6 + 1, tempBuffer);
-			iosystem->write_block(tempBuffer[blockToWrite], entry->bufferReader);
-			if (blockToWrite == 2){
+			iosystem->write_block(tempBuffer[tempPosition + blockToWrite + 1], entry->bufferReader);
+			if (blockToWrite == 3){
+				std::cout << "Cannot write, reached block max." << std::endl;
 				return -1;
 			}
-			iosystem->read_block(tempBuffer[blockToWrite + 1], entry->bufferReader);
+			iosystem->read_block(tempBuffer[tempPosition + blockToWrite+1], entry->bufferReader);
 		}
 		else{
 			entry->bufferReader[entry->currentPosition % 64] = value;
 		}
 		entry->currentPosition++;
 	}
-    
+	int blockToWrite = entry->currentPosition / 64;
+	iosystem->read_block(index % 6 + 1, tempBuffer);
+	tempBuffer[index / 6 * 4]  = entry->currentPosition;
+	iosystem->write_block(index % 6 + 1, tempBuffer);
+	if (tempBuffer[blockToWrite + 1] == 0){
+		iosystem->read_block(0, tempBuffer);
+		for (int i = 7; i < 64; i++){
+			if (tempBuffer[i] == 0){
+				tempBuffer[i] = 1;
+				iosystem->write_block(0, tempBuffer);
+				iosystem->read_block(index % 6 + 1, tempBuffer);
+				tempBuffer[blockToWrite + 1] = i;
+				iosystem->write_block(index % 6 + 1, tempBuffer);
+				break;
+			}
+		}
+	}
+	iosystem->write_block(tempBuffer[blockToWrite + 1], entry->bufferReader);
+	std::cout << "Wrote char: " << value << " " << count << " times to index " << index << "." << std::endl;
     return 1;
 }
 
 int FileSystem::lseek(int index, int pos)
 {
-    /*int position = pos/64;
-    iosystem->read_block(index + position, openFileTable[index].bufferReader);
-    openFileTable[index].currentPosition = pos-64*position;*/
 	OFT* entry = 0;
 
 	for (int i = 0; i < 3; i++){

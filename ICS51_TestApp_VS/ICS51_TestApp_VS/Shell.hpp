@@ -1,4 +1,10 @@
 #include <string>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include "FileSystem.hpp"
+#include "IOSystem.hpp"
+#include "stdafx.h"
 
 #ifndef SHELL_HPP
 #define SHELL_HPP
@@ -6,11 +12,13 @@
 class Shell
 {
 	private:
-/*		FileSystem* filesystem; */
+		FileSystem* filesystem; 
+		char fileContentBuffer[192];
+		void clearContent();
 	
 	public:
-/* 		Shell(FileSystem* filesystem); */
 		Shell();
+ 		Shell(FileSystem* filesystem); 
 		~Shell();
 		void execute();
 		int create(std::string name);

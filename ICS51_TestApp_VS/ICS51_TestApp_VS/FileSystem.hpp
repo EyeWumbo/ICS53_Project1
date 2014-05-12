@@ -34,7 +34,7 @@ private:
 
 	};
 	
-	struct dirEntry{
+	/*struct dirEntry{
 		std::string symbolic_file_name;
 		int descriptorIndex;
 
@@ -55,7 +55,7 @@ private:
 
 	};
 
-	dirEntry dir[14];
+	dirEntry dir[14];*/
 	OFT openFileTable[3];
 	IOSystem* iosystem;
 	char tempBuffer[64];

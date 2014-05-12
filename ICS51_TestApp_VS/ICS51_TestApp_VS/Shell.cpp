@@ -1,58 +1,60 @@
-#include <iostream>
-#include <string>
-#include <sstream>
 #include "Shell.hpp"
 
-/* Shell::Shell(FileSystem filesystem) */
+//
+//Shell::Shell(FileSystem filesystem) {
+//	this->filesystem = filesystem;
+//}
+
 Shell::Shell()
 {
-/* 	this->filesystem = filesystem; */
+	filesystem = new FileSystem(new IOSystem(64, 64));
 }
 
 Shell::~Shell(){
+	delete filesystem;
 }
 
 int Shell::create(std::string name){
-/* 	return filesystem->create(name); */
-	return 1;
+ 	return filesystem->create(name); 
+	//return 1;
 }
 
 int Shell::destroy(std::string name){
-/* 	return filesystem->destroy(name); */
-	return 1;
+ 	return filesystem->deleteFile(name); 
+	//return 1;
 }
 
 int Shell::open(std::string name){
 	//NEED TO FIX OPEN METHOD TO RETURN INDEX
-/* 	return filesystem->open(name); */
-	return 1;
+ 	return filesystem->open(name); 
+	//return 1;
 }
 
 void Shell::close(int index){
 	//NEED TO FIX CLOSE TO RETURN SUCCESS/FAIL
-/* 	filesystem->close(index); */
+ 	filesystem->close(index); 
 	return;
 }
 
 int Shell::read(int index, int count){
 /*	char* mem_area; */
-/* 	return filesystem->read(index, mem_area, count); */
-	return 1;
+ 	return filesystem->read(index, fileContentBuffer, count); 
+	//return 1;
 }
 
 int Shell::write(int index, char value, int count){
-/* 	return filesystem->write(index, value, count); */
-	return 1;
+ 	return filesystem->write(index, value, count); 
+	//return 1;
 }
 
 int Shell::seek(int index, int pos){
-/* 	return filesystem->lseek(index, pos); */
-	return 1;
+ 	return filesystem->lseek(index, pos); 
+	//return 1;
 }
 
 void Shell::directory(){
-/*	filesystem->directory(); */
-	return;
+	filesystem->directory(); 
+	//return;
 }
 
 /* Shell::initialize(){
