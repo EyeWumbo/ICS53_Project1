@@ -140,6 +140,9 @@ void FileSystem::close(int index){
 	}
 
 	int blockToWrite = entry->currentPosition / 64;
+	if (blockToWrite == 3){
+		blockToWrite--;
+	}
 	iosystem->read_block(index % 6 + 1, tempBuffer);
 	iosystem->write_block(tempBuffer[blockToWrite + 1], entry->bufferReader);
 	if (entry->currentPosition == 0){
@@ -403,6 +406,7 @@ int FileSystem::write(int index, char value, int count)
 
 	if (entry->currentPosition + count > 192){
 		std::cout << "Cannot write " << count << " bytes to file with index " << index << " at buffer position " << entry->currentPosition << "." << std::endl;
+		return -1;
 	}
 
 	iosystem->read_block(index % 6 + 1, tempBuffer);
@@ -421,7 +425,7 @@ int FileSystem::write(int index, char value, int count)
 		}
 	}
 	for (int i = 0; i < count; i++){
-		if (entry->currentPosition >= 192){
+		if (entry->currentPosition == 192){
 			std::cout << "Cannot write, file overflow." << std::endl;
 			return -1;
 		}
@@ -430,10 +434,7 @@ int FileSystem::write(int index, char value, int count)
 			int tempPosition = index / 6 * 4;
 			iosystem->read_block(index % 6 + 1, tempBuffer);
 			iosystem->write_block(tempBuffer[tempPosition + blockToWrite], entry->bufferReader);
-			if (blockToWrite == 3){
-				std::cout << "Cannot write, reached block max." << std::endl;
-				return -1;
-			}
+			
 			if (tempBuffer[tempPosition + blockToWrite + 1] == 0){
 				iosystem->read_block(0, tempBuffer);
 				for (int i = 7; i < 64; i++){
@@ -453,9 +454,14 @@ int FileSystem::write(int index, char value, int count)
 		entry->bufferReader[entry->currentPosition % 64] = value;
 		entry->currentPosition++;
 	}
+
+	
 	int blockToWrite = entry->currentPosition / 64;
+	if (blockToWrite == 3){
+		blockToWrite--;
+	}
 	iosystem->read_block(index % 6 + 1, tempBuffer);
-	tempBuffer[index / 6 * 4]  = entry->currentPosition;
+	tempBuffer[index / 6 * 4] = entry->currentPosition;
 	iosystem->write_block(index % 6 + 1, tempBuffer);
 	if (tempBuffer[blockToWrite + 1] == 0){
 		iosystem->read_block(0, tempBuffer);
@@ -468,9 +474,9 @@ int FileSystem::write(int index, char value, int count)
 				iosystem->write_block(index % 6 + 1, tempBuffer);
 				break;
 			}
-		}
+		}	
 	}
-	iosystem->write_block(tempBuffer[blockToWrite + 1], entry->bufferReader);
+	iosystem->write_block(tempBuffer[index / 6 * 4 + blockToWrite + 1], entry->bufferReader);
 	std::cout << "Wrote char: " << value << " " << count << " times to index " << index << "." << std::endl;
     return 1;
 }
