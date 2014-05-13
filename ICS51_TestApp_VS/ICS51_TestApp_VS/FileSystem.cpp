@@ -149,9 +149,6 @@ void FileSystem::close(int index){
 	if (entry->currentPosition == 0){
 		tempBuffer[index / 6 * 4] = 1;
 	}
-	else{
-		tempBuffer[index / 6 * 4] = entry->currentPosition;
-	}
 	iosystem->write_block(index % 6 + 1, tempBuffer);
 	entry->currentPosition = -1;
 	entry->fileDescriptorIndex = -1;
@@ -463,7 +460,7 @@ int FileSystem::write(int index, char value, int count)
 		blockToWrite--;
 	}
 	iosystem->read_block(index % 6 + 1, tempBuffer);
-	tempBuffer[index / 6 * 4] = entry->currentPosition;
+	tempBuffer[index / 6 * 4] += count;
 	iosystem->write_block(index % 6 + 1, tempBuffer);
 	if (tempBuffer[blockToWrite + 1] == 0){
 		iosystem->read_block(0, tempBuffer);
