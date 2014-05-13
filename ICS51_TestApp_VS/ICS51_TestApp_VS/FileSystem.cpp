@@ -31,7 +31,7 @@ int FileSystem::open(std::string symbolicName){
 		}
 	}
 
-	if (entry == nullptr){
+	if (entry == 0){
 		std::cout << "No OFT slots available." << std::endl;
 		return -1;
 	}
@@ -97,7 +97,7 @@ int FileSystem::open_desc(int file_no){
 		}
 	}
 
-	if (entry == nullptr){
+	if (entry == 0){
 		std::cout << "No open OFT slots found when attempting to open descriptor number " << file_no << "." << std::endl;
 		return -1;
 	}
@@ -360,7 +360,7 @@ int FileSystem::read(int index, char* mem_area, int count)
 		}
 	}
 
-	if (entry == nullptr){
+	if (entry == 0){
 		return -1;
 	}
 	iosystem->read_block(index % 6 + 1, tempBuffer);
@@ -394,7 +394,7 @@ int FileSystem::write(int index, char value, int count)
 		}
 	}
 
-	if (entry == nullptr){
+	if (entry == 0){
 		//std::cout << "Index " << index << " not found in the OFT." << std::endl;
 		return -1;
 	}
@@ -499,7 +499,7 @@ int FileSystem::lseek(int index, int pos)
 		}
 	}
 
-	if (entry == nullptr){
+	if (entry == 0){
 		return -1;
 	}
 

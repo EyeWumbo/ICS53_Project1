@@ -43,7 +43,7 @@ void IOSystem::restore(){
 			
 			for (int j = 0; j < 64; j++){
 				getline(saveFile, line, " "[0]);
-				ldisk[i][j] = std::atoi(line.c_str());
+				ldisk[i][j] = atoi(line.c_str());
 			}
 		}
 
