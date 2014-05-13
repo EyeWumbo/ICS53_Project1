@@ -80,12 +80,12 @@ int main()
 	std::cout << std::endl;
 
 	//Write Testing
-	fSystem.write(2, 'y', 10);
+	fSystem.write(2, 'y', 60);
 	fSystem.write(2, 'x', 10);
 	std::cout << std::endl;
 
 	char info[20];
-	fSystem.lseek(2, 5);
+	fSystem.lseek(2, 55);
 	fSystem.read(2, info, 10);
 
 	for (int i = 0; i < 10; i++){

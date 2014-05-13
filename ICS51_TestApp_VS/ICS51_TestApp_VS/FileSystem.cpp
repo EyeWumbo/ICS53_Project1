@@ -369,7 +369,8 @@ int FileSystem::read(int index, char* mem_area, int count)
 	if (entry == nullptr){
 		return -1;
 	}
-
+	iosystem->read_block(index % 6 + 1, tempBuffer);
+	iosystem->read_block(tempBuffer[index / 6 * 4 + entry->currentPosition / 64 + 1], entry->bufferReader);
 	for (int i = 0; i < count; i++){
 		if (entry->currentPosition == 192){
 			return -1;
@@ -382,7 +383,7 @@ int FileSystem::read(int index, char* mem_area, int count)
 			}
 			iosystem->read_block(tempBuffer[(index / 6 * 4) + blockToRead + 1], entry->bufferReader);
 		}
-		std::cout << entry->bufferReader[entry->currentPosition] << std::endl;
+		//std::cout << entry->bufferReader[entry->currentPosition] << std::endl;
 		mem_area[i] = entry->bufferReader[entry->currentPosition % 64];
 		entry->currentPosition++;
 		
@@ -500,8 +501,6 @@ int FileSystem::lseek(int index, int pos)
 	if (blockNumber == 3){
 		blockNumber--;
 	}
-	iosystem->read_block(index % 6 + 1, tempBuffer);
-	iosystem->read_block(tempBuffer[index / 6 * 4 + 1 + blockNumber], tempBuffer);
 	
 	entry->currentPosition = pos;
 
