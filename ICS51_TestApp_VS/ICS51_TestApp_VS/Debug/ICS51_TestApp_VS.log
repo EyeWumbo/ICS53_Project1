@@ -1,4 +1,4 @@
-﻿Build started 5/12/2014 6:24:31 PM.
+﻿Build started 5/12/2014 6:54:10 PM.
      1>Project "C:\Users\PiggyHasTheConch\AppData\Roaming\Sublime Text 3\Packages\ICS_Project_1\ICS51_TestApp_VS\ICS51_TestApp_VS\ICS51_TestApp_VS.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\ICS51_TestApp_VS.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /FIstdafx.h /analyze- /errorReport:prompt main.cpp
@@ -15,4 +15,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.77
+Time Elapsed 00:00:00.85
