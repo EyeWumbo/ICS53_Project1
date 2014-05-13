@@ -80,6 +80,7 @@ int main()
 	std::cout << std::endl;
 
 	//Write Testing
+	fSystem.write(2, 'z', 1);
 	fSystem.write(2, 'y', 60);
 	fSystem.write(2, 'x', 10);
 	std::cout << std::endl;

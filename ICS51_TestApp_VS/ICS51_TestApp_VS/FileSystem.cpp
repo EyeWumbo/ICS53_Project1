@@ -459,8 +459,21 @@ int FileSystem::write(int index, char value, int count)
 	if (blockToWrite == 3){
 		blockToWrite--;
 	}
+	bool wasEmpty = false;
 	iosystem->read_block(index % 6 + 1, tempBuffer);
-	tempBuffer[index / 6 * 4] += count;
+	if (tempBuffer[index / 6 * 4] == 1){
+		iosystem->read_block(tempBuffer[index / 6 * 4 + 1], tempBuffer);
+		if (tempBuffer[0] == 0){
+			wasEmpty = true;
+		}
+	}
+	iosystem->read_block(index % 6 + 1, tempBuffer);
+	if (wasEmpty){
+		tempBuffer[index / 6 * 4] = count;
+	}
+	else{
+		tempBuffer[index / 6 * 4] += count;
+	}
 	iosystem->write_block(index % 6 + 1, tempBuffer);
 	if (tempBuffer[blockToWrite + 1] == 0){
 		iosystem->read_block(0, tempBuffer);
