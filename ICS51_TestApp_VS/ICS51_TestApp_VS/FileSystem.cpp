@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "FileSystem.hpp"
 #include <iostream>
 #include <string>
@@ -9,9 +8,6 @@ FileSystem::FileSystem(IOSystem* iosystem){
 
 	this->iosystem = iosystem;
 
-	/*for(int i = 0; i < 14; i ++){
-		dir[i] = dirEntry();
-	}*/
 	for(int i = 0; i < 3; i ++){
 		openFileTable[i] = OFT();
 	}
@@ -43,7 +39,7 @@ int FileSystem::open(std::string symbolicName){
 	for (int i = 1; i < 4; i++){
 		iosystem->read_block(1, tempBuffer);
 		if (tempBuffer[i] == 0){
-			std::cout << "File with name " << symbolicName << " does not exist in the file system." << std::endl;
+			//std::cout << "File with name " << symbolicName << " does not exist in the file system." << std::endl;
 			return -1;
 		}
 		iosystem->read_block(tempBuffer[i], tempBuffer);
@@ -61,8 +57,8 @@ int FileSystem::open(std::string symbolicName){
 			if (match){
 				for (int eval = 0; eval < 3; eval++){
 					if (openFileTable[eval].fileDescriptorIndex == tempBuffer[j + 10]){
-						std::cout << "File with name " << symbolicName << " already opened within OFT at slot " << eval << "." << std::endl;
-						return -1;
+						//std::cout << "File with name " << symbolicName << " already opened within OFT at slot " << eval << "." << std::endl;
+						return openFileTable[eval].fileDescriptorIndex;
 					}
 				}
 				entry->fileDescriptorIndex = tempBuffer[j + 10];
@@ -70,8 +66,7 @@ int FileSystem::open(std::string symbolicName){
 				int tempPosition = tempBuffer[j + 10] / 6 * 4;
 				iosystem->read_block(tempBuffer[j + 10] % 6 + 1, tempBuffer);
 				iosystem->read_block(tempBuffer[tempPosition + 1], entry->bufferReader);
-				std::cout << "Opened file with name " << symbolicName << " to OFT slot " << entry - openFileTable << "." << std::endl;
-				std::cout << entry->fileDescriptorIndex << std::endl;
+				//std::cout << "Opened file with name " << symbolicName << " to OFT slot " << entry - openFileTable << "." << std::endl;
 				return entry->fileDescriptorIndex;
 			}
 		}
@@ -111,12 +106,12 @@ int FileSystem::open_desc(int file_no){
 	iosystem->read_block(tempBuffer[1], entry->bufferReader);
 	entry->currentPosition = 0;;
 	entry->fileDescriptorIndex = file_no;
-	std::cout << "Successfully opened file descriptor of index " << file_no << " to OFT slot " << entry - openFileTable << "." << std::endl;
+	//std::cout << "Successfully opened file descriptor of index " << file_no << " to OFT slot " << entry - openFileTable << "." << std::endl;
 	return file_no;
 }
 
-void FileSystem::close(int index){
-
+void FileSystem::close(int index)
+{
 	OFT* entry = 0;
 
 	for (int i = 0; i < 3; i++){
@@ -126,7 +121,7 @@ void FileSystem::close(int index){
 	}
 
 	if (entry == 0){
-		std::cout << "OFT slot with file descriptor index " << index << " not found." << std::endl;
+		//std::cout << "OFT slot with file descriptor index " << index << " not found." << std::endl;
 		return;
 	}
 
@@ -136,7 +131,7 @@ void FileSystem::close(int index){
 		for (int i = 0; i < 64; i++){
 			entry->bufferReader[i] = 0;
 		}
-		std::cout << "Empty file with descriptor index " << index << " closed. OFT slot " << entry - openFileTable << " freed." << std::endl;
+		//std::cout << "Empty file with descriptor index " << index << " closed. OFT slot " << entry - openFileTable << " freed." << std::endl;
 		return;
 	}
 
@@ -155,15 +150,17 @@ void FileSystem::close(int index){
 	for (int i = 0; i < 64; i++){
 		entry->bufferReader[i] = 0;
 	}
-	std::cout << "OFT slot " << entry - openFileTable << " cleared of file descriptor with index " << index << "." << std::endl;
+	//std::cout << "OFT slot " << entry - openFileTable << " cleared of file descriptor with index " << index << "." << std::endl;
 }
 
 void FileSystem::directory(){
 
 	iosystem->read_block(1, tempBuffer);
-	std::cout << "Root directory " << (int)(convertSize(tempBuffer[0])) << std::endl;
+	//std::cout << "Root directory " << (int)(convertSize(tempBuffer[0])) << std::endl;
 	for (int i = 1; i < 4; i++){
 		iosystem->read_block(1, tempBuffer);
+		if (tempBuffer[i] == 0)
+			continue;
 		iosystem->read_block(tempBuffer[i], tempBuffer);
 		for (int j = 0; j < 53; j += 11){
 			if (tempBuffer[j] == 0){
@@ -178,7 +175,7 @@ void FileSystem::directory(){
 			std::cout << " ";
 			int tempIndex = tempBuffer[j+10];
 			iosystem->read_block(tempIndex % 6 + 1, tempBuffer);
-			std::cout << (int)(convertSize(tempBuffer[tempIndex / 6 * 4])) << std::endl;
+			std::cout << (int)(convertSize(tempBuffer[tempIndex / 6 * 4])) << " bytes" << std::endl;
 			iosystem->read_block(1, tempBuffer);
 			iosystem->read_block(tempBuffer[i], tempBuffer);
 		}
@@ -209,7 +206,7 @@ int FileSystem::create(std::string symbolic_file_name){
 				}
 			}
 			if (match){
-				std::cout << "File " << symbolic_file_name << " already exists." << std::endl;
+				//std::cout << "File " << symbolic_file_name << " already exists." << std::endl;
 				return -1;
 			}
 		}
@@ -286,7 +283,7 @@ int FileSystem::create(std::string symbolic_file_name){
 			break;
 		}
 	}
-	return 0;
+	return 1;
 }
 
 int FileSystem::deleteFile(std::string fileName){
@@ -316,7 +313,7 @@ int FileSystem::deleteFile(std::string fileName){
 				}
 				char temp2 = tempBuffer[j + 10];
 				tempBuffer[j + 10] = 0;
-				std::cout << (int)(temp2) << std::endl;
+				//std::cout << (int)(temp2) << std::endl;
 				iosystem->write_block(temp, tempBuffer);
 				iosystem->read_block((temp2 % 6) + 1, tempBuffer);
 				int tempPosition = temp2 / 6 * 4;
@@ -390,7 +387,6 @@ int FileSystem::read(int index, char* mem_area, int count)
 
 int FileSystem::write(int index, char value, int count)
 {
-
 	OFT* entry = 0;
 	for (int i = 0; i < 3; i++){
 		if (openFileTable[i].fileDescriptorIndex == index){
@@ -399,19 +395,19 @@ int FileSystem::write(int index, char value, int count)
 	}
 
 	if (entry == nullptr){
-		std::cout << "Index " << index << " not found in the OFT." << std::endl;
+		//std::cout << "Index " << index << " not found in the OFT." << std::endl;
 		return -1;
 	}
 
 	if (entry->currentPosition + count > 192){
-		std::cout << "Cannot write " << count << " bytes to file with index " << index << " at buffer position " << entry->currentPosition << "." << std::endl;
+		//std::cout << "Cannot write " << count << " bytes to file with index " << index << " at buffer position " << entry->currentPosition << "." << std::endl;
 		return -1;
 	}
 
 	iosystem->read_block(index % 6 + 1, tempBuffer);
 	if (tempBuffer[index / 6 * 4 + (entry->currentPosition / 64 + 1)] == 0){
 		iosystem->read_block(0, tempBuffer);
-		for (int i = 7; i < 64; i++){			
+		for (int i = 7; i < 64; i++){
 			if (tempBuffer[i] == 0){
 				tempBuffer[i] = 1;
 				iosystem->write_block(0, tempBuffer);
@@ -489,7 +485,7 @@ int FileSystem::write(int index, char value, int count)
 		}	
 	}
 	iosystem->write_block(tempBuffer[index / 6 * 4 + blockToWrite + 1], entry->bufferReader);
-	std::cout << "Wrote char: " << value << " " << count << " times to index " << index << "." << std::endl;
+	//std::cout << "Wrote char: " << value << " " << count << " times to index " << index << "." << std::endl;
     return 1;
 }
 
@@ -511,6 +507,8 @@ int FileSystem::lseek(int index, int pos)
 	if (blockNumber == 3){
 		blockNumber--;
 	}
+	iosystem->read_block(index % 6 + 1, tempBuffer);
+	iosystem->read_block(tempBuffer[index / 6 * 4 + 1 + blockNumber], tempBuffer);
 	
 	entry->currentPosition = pos;
 

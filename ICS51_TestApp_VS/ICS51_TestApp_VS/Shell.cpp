@@ -1,69 +1,85 @@
 #include "Shell.hpp"
 
-//
-//Shell::Shell(FileSystem filesystem) {
-//	this->filesystem = filesystem;
-//}
-
-Shell::Shell()
-{
-	filesystem = new FileSystem(new IOSystem(64, 64));
+Shell::Shell(){
+	iosystem = new IOSystem(64,64);
+	filesystem = new FileSystem(iosystem);
 }
 
 Shell::~Shell(){
 	delete filesystem;
 }
 
-int Shell::create(std::string name){
- 	return filesystem->create(name); 
-	//return 1;
+void Shell::create(std::string name){
+ 	int success = filesystem->create(name);
+	if (success == -1)
+		std::cout << "error" << std::endl;
+	else
+		std::cout << "file " << name << " created" << std::endl;	
 }
 
-int Shell::destroy(std::string name){
- 	return filesystem->deleteFile(name); 
-	//return 1;
+void Shell::destroy(std::string name){
+ 	int success = filesystem->deleteFile(name);
+	if (success == -1)
+		std::cout << "error" << std::endl;
+	else
+		std::cout << "file " << name << " deleted" << std::endl;
 }
 
-int Shell::open(std::string name){
-	//NEED TO FIX OPEN METHOD TO RETURN INDEX
- 	return filesystem->open(name); 
-	//return 1;
+void Shell::open(std::string name){
+ 	int index = filesystem->open(name);
+	if (index == -1)
+		std::cout << "error" << std::endl;
+	else
+		std::cout << "file " << name << " opened, index=" << index << std::endl;
 }
 
 void Shell::close(int index){
-	//NEED TO FIX CLOSE TO RETURN SUCCESS/FAIL
- 	filesystem->close(index); 
-	return;
+ 	filesystem->close(index);
+	std::cout << "file with index " << index << " closed" << std::endl;
 }
 
-int Shell::read(int index, int count){
-/*	char* mem_area; */
- 	return filesystem->read(index, fileContentBuffer, count); 
-	//return 1;
+void Shell::read(int index, int count){
+	for (int i=0; i<192; i++)
+		fileContentBuffer[i] = 0;
+ 	int success = filesystem->read(index, fileContentBuffer, count);
+	if (success == -1)
+		std::cout << "error" << std::endl;
+	else
+		std::cout << count << " bytes read: " << fileContentBuffer << std::endl;
 }
 
-int Shell::write(int index, char value, int count){
- 	return filesystem->write(index, value, count); 
-	//return 1;
+void Shell::write(int index, char value, int count){
+ 	int success = filesystem->write(index, value, count);
+	if (success == -1)
+		std::cout << "error" << std::endl;
+	else
+		std::cout << count << " bytes written" << std::endl;
 }
 
-int Shell::seek(int index, int pos){
- 	return filesystem->lseek(index, pos); 
-	//return 1;
+void Shell::seek(int index, int pos){
+ 	int success = filesystem->lseek(index, pos);
+	if (success == -1)
+		std::cout << "error" << std::endl;
+	else
+		std::cout << "current position is " << pos << std::endl;
 }
 
 void Shell::directory(){
 	filesystem->directory(); 
-	//return;
 }
 
-/* Shell::initialize(){
-} */
+void Shell::save(){
+	iosystem->save();
+	std::cout << "disk saved" << std::endl;
+}
 
-/* Shell::save(){
-} */
+void Shell::restore(){
+	iosystem->restore();
+	std::cout << "disk restored" << std::endl;
+}
 
 void Shell::execute(){
+	bool initialized = false;
 	while (true)
 	{
         std::string input;
@@ -74,77 +90,55 @@ void Shell::execute(){
 		if (command == "cr"){
 				std::string name;
 				i >> name;
-				int success = create(name);
-				if (success == -1)
-					std::cout << "error" << std::endl;
-				else
-					std::cout << "file " << name << " created" << std::endl;
+				create(name);
 		}
 		else if (command == "de"){
 				std::string name;
 				i >> name;
-				int success = destroy(name);
-				if (success == -1)
-					std::cout << "error" << std::endl;
-				else
-					std::cout << "file " << name << " destroyed" << std::endl;
+				destroy(name);
 		}
 		else if (command == "op"){
 				std::string name;
 				i >> name;
-				int success = open(name);
-				if (success == -1)
-					std::cout << "error" << std::endl;
-				else
-					std::cout << "file " << name << " opened, index=" << success << std::endl;
+				open(name);
 		}
 		else if (command == "cl"){
 				int index;
 				i >> index;
 				close(index);
-				std::cout << index << " closed" << std::endl;
 		}
 		else if (command == "rd"){
 				int index, count;
 				i >> index >> count;
-				int success = read(index, count);
-				if (success == -1)
-					std::cout << "error" << std::endl;
-				else
-					std::cout << count << " bytes read: " << std::endl;
+				read(index, count);
 		}
 		else if (command == "wr"){
 				int index, count;
 				char c;
 				i >> index >> c >> count;
-				int success = write(index, c, count);
-				if (success == -1)
-					std::cout << "error" << std::endl;
-				else
-					std::cout << count << " bytes written" << std::endl;
+				write(index, c, count);
 		}
 		else if (command == "sk"){
 				int index, pos;
 				i >> index >> pos;
-				int success = seek(index, pos);
-				if (success == -1)
-					std::cout << "error" << std::endl;
-				else
-					std::cout << "current position is " << pos << std::endl;
+				seek(index, pos);
 		}
 		else if (command == "dr"){
 				directory();
 		}
 		else if (command == "in"){
-				std::cout << "disk initialized" << std::endl;
-				/* std::cout << "disk restored" << std::endl; */
-				/* initialize(); */
+				if (!initialized){
+					initialized = true;
+					std::cout << "disk initialized" << std::endl;
+				}
+				else{
+					restore();
+				}
 		}
 		else if (command == "sv"){
-				std::cout << "disk saved" << std::endl;
-				/* save(); */
+				save();
 		}
-		else if (command == "quit"){
+		else if (command == "q"){
 				break;
 		}
 		else {

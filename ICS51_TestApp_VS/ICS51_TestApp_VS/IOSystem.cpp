@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -16,13 +15,7 @@ IOSystem::IOSystem(int l, int b)
 			ldisk[i][j] = 0;
 		}
 	}
-	
-
 }
-
-//IOSystem::~IOSystem(){
-//
-//}
 
 void IOSystem::read_block(int i, char* p)
 {	
@@ -57,9 +50,8 @@ void IOSystem::restore(){
 		saveFile.close();
 	}
 	else{
-		std::cout << "It brokedededed" << std::endl;
+		std::cout << "error" << std::endl;
 	}
-
 }
 
 // Saves the array to a file as a disk image.
