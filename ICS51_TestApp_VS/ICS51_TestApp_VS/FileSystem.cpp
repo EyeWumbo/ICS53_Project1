@@ -71,7 +71,8 @@ int FileSystem::open(std::string symbolicName){
 				iosystem->read_block(tempBuffer[j + 10] % 6 + 1, tempBuffer);
 				iosystem->read_block(tempBuffer[tempPosition + 1], entry->bufferReader);
 				std::cout << "Opened file with name " << symbolicName << " to OFT slot " << entry - openFileTable << "." << std::endl;
-				return tempBuffer[j + 10];
+				std::cout << entry->fileDescriptorIndex << std::endl;
+				return entry->fileDescriptorIndex;
 			}
 		}
 
@@ -370,7 +371,7 @@ int FileSystem::read(int index, char* mem_area, int count)
 	}
 
 	for (int i = 0; i < count; i++){
-		if (entry->currentPosition >= 192){
+		if (entry->currentPosition == 192){
 			return -1;
 		}
 		if (entry->currentPosition % 64 == 0){
@@ -381,7 +382,7 @@ int FileSystem::read(int index, char* mem_area, int count)
 			}
 			iosystem->read_block(tempBuffer[(index / 6 * 4) + blockToRead + 1], entry->bufferReader);
 		}
-		
+		std::cout << entry->bufferReader[entry->currentPosition] << std::endl;
 		mem_area[i] = entry->bufferReader[entry->currentPosition % 64];
 		entry->currentPosition++;
 		
@@ -496,17 +497,13 @@ int FileSystem::lseek(int index, int pos)
 	}
 
 	int blockNumber = pos / 64;
-	int positionWithinBlock = pos % 64;
-
-	int tempPosition = index / 6 * 4;
-	iosystem->read_block(index % 6 + 1, tempBuffer);
-	iosystem->read_block(1 + blockNumber, tempBuffer);
-
-	for (int i = 0; i < 64; i++){
-		entry->bufferReader[i] = tempBuffer[i];
+	if (blockNumber == 3){
+		blockNumber--;
 	}
+	iosystem->read_block(index % 6 + 1, tempBuffer);
+	iosystem->read_block(tempBuffer[index / 6 * 4 + 1 + blockNumber], tempBuffer);
 	
-	entry->currentPosition = positionWithinBlock;
+	entry->currentPosition = pos;
 
     return 1;
 }

@@ -81,22 +81,26 @@ int main()
 
 	//Write Testing
 	fSystem.write(2, 'y', 10);
-	fSystem.write(3, 'x', 192);
+	fSystem.write(2, 'x', 10);
+	std::cout << std::endl;
+
+	char info[20];
+	fSystem.lseek(2, 5);
+	fSystem.read(2, info, 10);
+
+	for (int i = 0; i < 10; i++){
+		std::cout << info[i];
+	}
 	std::cout << std::endl;
 
 	fSystem.close(2);
 	fSystem.close(3);
 	fSystem.close(5);
 
-	fSystem.open_desc(3);
-	char info[192];
-	fSystem.read(3, info, 192);
+	fSystem.open_desc(2);
+	
 
-	for (int i = 0; i < 192; i++){
-		std::cout << info[i];
-	}
-
-	std::cout << std::endl;
+	
 
 	fSystem.directory();
 
