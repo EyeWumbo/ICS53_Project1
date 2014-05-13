@@ -1,19 +1,15 @@
-#include "stdafx.h"
 #include <iostream>
 #include <string>
 #include "IOSystem.hpp"
 #include "FileSystem.hpp"
+#include "Shell.hpp"
 
 int main()
 {
-	IOSystem system = IOSystem(10,5);
+	Shell shell = Shell();
+	shell.execute();
 	
-	//system.restore();
-	FileSystem fSystem = FileSystem(&system);
-
-	
-	
-	//Creation Test
+/* 	//Creation Test
 	std::cout << "Creation test begin." << std::endl << std::endl;
 	fSystem.create("hallo0");
 	
@@ -80,28 +76,23 @@ int main()
 	std::cout << std::endl;
 
 	//Write Testing
-	fSystem.write(2, 'z', 1);
-	fSystem.write(2, 'y', 60);
-	fSystem.write(2, 'x', 10);
-	std::cout << std::endl;
-
-	char info[20];
-	fSystem.lseek(2, 55);
-	fSystem.read(2, info, 10);
-
-	for (int i = 0; i < 10; i++){
-		std::cout << info[i];
-	}
+	fSystem.write(2, 'y', 10);
+	fSystem.write(3, 'x', 64);
 	std::cout << std::endl;
 
 	fSystem.close(2);
 	fSystem.close(3);
 	fSystem.close(5);
 
-	fSystem.open_desc(2);
-	
+	fSystem.open_desc(3);
+	char info[10];
+	fSystem.read(3, info, 10);
 
-	
+	for (int i = 0; i < 10; i++){
+		std::cout << info[i];
+	}
+
+	std::cout << std::endl;
 
 	fSystem.directory();
 
@@ -109,7 +100,7 @@ int main()
 	system.restore();
 
 	std::string temp;
-	std::cin >> temp;
+	std::cin >> temp; */
     return 0;
 }
 
