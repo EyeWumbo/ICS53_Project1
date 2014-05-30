@@ -39,10 +39,7 @@ int FileSystem::open(std::string symbolicName){
 				if (openFileTable[j].isEmpty()){
 					openFileTable[j].currentPosition = 0;
 					openFileTable[j].fileDescriptorIndex = i;
-					iosystem->read_block(i, 0);
-					for (int k = 0; k < 64; k++){
-						openFileTable[j].bufferReader[k] = iosystem->getCurrentBlock()[k];
-					}
+					iosystem->read_block(i, openFileTable[j].bufferedReader);
 					spaceAvailable = true;
 				}
 			}
@@ -63,11 +60,8 @@ int FileSystem::open_desc(int file_no){
 		if (openFileTable[i].isEmpty()){
 			openFileTable[i].currentPosition = 0;
 			openFileTable[i].fileDescriptorIndex = file_no;
-			iosystem->read_block(i, 0);
-			for (int j = 0; j < 64; j++){
-				openFileTable[i].bufferReader[j] = iosystem->getCurrentBlock()[j];
-			}
-			return file_no;
+			iosystem->read_block(i, openFileTable[i].bufferedReader);
+			return i;
 		}
 	}
 	return -1;
@@ -92,7 +86,7 @@ void FileSystem::directory(){
 }
 
 int FileSystem::create(string symbolic_file_name){
-	char* current = new char[64];
+	char* current = char[64];
 
 	for (int i = 0; i < 14; ++i){
 		dirEntry currentDirEntry = dir[i];
@@ -164,10 +158,6 @@ int FileSystem::read(int index, char* mem_area, int count)
 int FileSystem::write(int index, char value, int count)
 {
     iosystem->write_block(index, openFileTable[index].bufferReader);
-    for(int i=0; i<64; i++)
-    {
-        iosystem->getCurrentBlock()[i] = openFileTable[index].bufferReader[i];
-    }
     
     return 1;
 }

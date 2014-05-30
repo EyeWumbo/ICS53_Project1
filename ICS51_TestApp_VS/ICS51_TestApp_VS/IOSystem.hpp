@@ -95,8 +95,6 @@ class IOSystem
 
 		FileDescriptor cache[14];
 		Block ldisk[64];
-
-		Block currentBlock;
 	
 	public:
 		IOSystem(int l, int b);

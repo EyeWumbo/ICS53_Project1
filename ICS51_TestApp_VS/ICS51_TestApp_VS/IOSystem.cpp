@@ -32,7 +32,7 @@ IOSystem::IOSystem(int l, int b)
 		ldisk[i] = Block();
 	}
 
-	std::string lel = "and so with the power of greyskull shit happened the end";
+	std::string lel = "professional looking text";
 	for (int i = 0; i < 64; i++){
 		if (lel[i] == '\0'){
 			break;
@@ -49,10 +49,9 @@ IOSystem::~IOSystem(){
 
 void IOSystem::read_block(int i, char* p)
 {	
-	for (int b = 0; b < B; b++)
+	for (int b = 0; b < L; b++)
 	{
-		Block c = ldisk[i];
-		currentBlock = c;
+		p[b] = ldisk[i][b];
 	}
 }
 
@@ -63,7 +62,9 @@ void IOSystem::write_block(int i, char* p)
 		char c = p[b];
 		ldisk[i][b] = c;
 	}*/
-	ldisk[i] = currentBlock;
+	for(int b = 0; b < L; b ++){
+	    ldisk[i][b] = p[b];
+	}
 }
 
 void IOSystem::restore(){
@@ -101,7 +102,7 @@ void IOSystem::restore(){
 		std::cin >> line;
 	}
 	else{
-		std::cout << "It brokedededed" << std::endl;
+		std::cout << "Error" << std::endl;
 	}
 
 }
@@ -119,7 +120,7 @@ void IOSystem::save(){
 	}
 
 	saveFile << -1 << std::endl;
-	for (int i = this->L; i < 64; i++){
+	for (int i = this->L; i < L; i++){
 		if (ldisk[i].isEmpty()){
 			continue;
 		}
@@ -136,10 +137,6 @@ int IOSystem::getNumBlocks(){
 
 int IOSystem::getNumDescriptors(){
 	return this->L;
-}
-
-char* IOSystem::getCurrentBlock(){
-	return currentBlock.memory;
 }
 
 int IOSystem::findFreeDescriptor(){
