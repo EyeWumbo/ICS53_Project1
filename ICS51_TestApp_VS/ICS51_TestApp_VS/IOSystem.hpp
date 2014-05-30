@@ -17,55 +17,9 @@ class IOSystem
 		int B;
 		bool bitmap[4][8];
 
-		struct FileDescriptor{
-			unsigned char fileSize;
-			unsigned char blockLocations[3];
-			bool isFree;
-
-			FileDescriptor(){
-				fileSize = 0;
-				for (int i = 0; i < 3; i++){
-					blockLocations[i] = 0;
-				}
-			}
-
-			FileDescriptor(){
-				initialize();
-			}
-
-			//resets parameters
-			void initialize()
-			{
-				fileSize = 0;
-				isFree = true;
-				for (int i = 0; i < 3; ++i){
-					blockLocations[i] = 0;
-				}
-			}
-
-			bool isFree(){
-				return isFree;
-			}
-
-			void setAllocated()
-			{
-				isFree = false;
-			}
-
-			friend std::ostream& operator <<(std::ostream& os, const FileDescriptor& fd){
-				os << std::endl;
-				os << (int)fd.fileSize << std::endl;
-				for (int i = 0; i < 3; i++){
-					os << (int)fd.blockLocations[i] << std::endl;
-				}
-				return os;
-			}
-
-		};
-
 		struct Block{
 
-			char memory[64];
+			unsigned char memory[64];
 
 			Block(){
 				for (int i = 0; i < 64; i++){
@@ -93,12 +47,11 @@ class IOSystem
 
 		};
 
-		FileDescriptor cache[14];
-		Block ldisk[64];
+		unsigned char ldisk[64][64];
 	
 	public:
 		IOSystem(int l, int b);
-		~IOSystem();
+		//~IOSystem();
 		void read_block(int i, char *p);
 		void write_block(int i, char *p);
 		void save();

@@ -50,9 +50,11 @@ private:
 
 	};
 
-	dirEntry dir[14];
 	OFT openFileTable[3];
 	IOSystem* iosystem;
+	char tempBuffer[64];
+
+	unsigned char convertSize(const char arg);
 
 public:
 	FileSystem(IOSystem* iosystem);
@@ -60,11 +62,9 @@ public:
 	int open_desc(int desc_no);
 	void close(int index);
 	void directory();
-	int create(string symbolic_file_name);
-	int deleteFile(string fileName);
+	int create(std::string symbolic_file_name);
+	int deleteFile(std::string fileName);
 	int read(int index, char* mem_area, int count);
-	int FileSystem::write(int index, char value, int count);
-	int FileSystem::lseek(int index, int pos);
 };
 
 #endif
